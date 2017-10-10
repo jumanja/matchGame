@@ -3,6 +3,7 @@ var segundos = 0;
 var minutos = 0;
 var horas = 0;
 var control;
+var match;
 
 var Centesimas = "";
 var Segundos = "";
@@ -17,18 +18,20 @@ function inicio () {
 
 	//Start countDown
 	countDownDate = new Date();
-	countDownDate.setMinutes(countDownDate.getMinutes() + 2);
+	countDownDate.setMinutes(countDownDate.getMinutes() + 2);	//put 2 minutes
 
 	//control = setInterval(cronometro,10);
 	control = setInterval(countDown,500);
+	match = setInterval(checkMatch,2000);	//put 2000 for 2 seconds
 
 }
 function parar () {
 	clearInterval(control);
-
+	clearInterval(match);
 }
 function reinicio () {
 	clearInterval(control);
+	clearInterval(match);
 	centesimas = 0;
 	segundos = 0;
 	minutos = 0;

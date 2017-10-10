@@ -5,6 +5,8 @@ var maxCols = 7;
 var toClean = [];
 var puntaje = 0;
 var movimientos = 0;
+var nroVecesCheck = 0;
+
 function inicioJuego(){
   //hideAll();
   //bloqueHandler();
@@ -13,7 +15,7 @@ function inicioJuego(){
   //Populate Board
   emptyBoard();
   populateBoard();
-  checkMatch();
+  //checkMatch();
   numeroClicks=0;
 }
 function emptyBoard() {
@@ -37,32 +39,59 @@ function populateBoard() {
 
           var candyType = Math.floor(Math.random() * 4);
           board[row].push(candyType+1);
-          $(".col-" + (col+1) ).append("<img id='"+("candy_"+row+col)+"' class='elemento' src='image/"+board[row][col]+".png'>");
-          $("#candy_"+row+col).draggable();
-          $("#candy_"+row+col).droppable({
-            accept: "elemento",
-             drop: function(event, ui){
-               console.log("drop " + row+col)
-               var otherSrc = ui.draggable.attr("src");
-               var otherId = ui.draggable.attr("id");
-               ui.draggable.attr("src", $(this).attr("src"));
-               ui.draggable.attr("id", $(this).attr("id"));
-               $this.attr("src") = otherSrc;
-               $this.attr("id") = otherId;
-               movimientos++;
-               $("#movimientos-text").text(movimientos);
+          //$(".col-" + (col+1) ).prepend("<img alt='"+("candy_"+row+col)+"' class='elemento' src='image/"+board[row][col]+".png'>");
+          //.attr("title", "_"+(row+1)+(col+1))
 
-             }
-
-          });
+          $(".col-" + (col+1) ).prepend(
+              newCandy(candyType+1)
+          );
 
       }
-      console.log("board["+row+"]" + board[row]);
+      //console.log("board["+row+"]" + board[row]);
     }
+
+    //just for debug
+    /*for (var row = maxRows-1; row >= 0; row--) {
+      console.log("populateBoard board["+row+"]" + board[row]);
+    }*/
+
+}
+
+function newCandy(candyType){
+  return  $("<img/>")
+                .attr("src", "image/"+candyType+".png")
+                .attr("title", candyType)
+                .addClass("elemento")
+                .draggable()
+                .droppable({
+                    accept: "elemento",
+                     drop: function(event, ui){
+                       console.log("dropped! " )
+                       var otherSrc = ui.draggable.attr("src");
+                       var otherId = ui.draggable.attr("id");
+                       ui.draggable.attr("src", $(this).attr("src"));
+                       ui.draggable.attr("id", $(this).attr("id"));
+                       $this.attr("src") = otherSrc;
+                       $this.attr("id") = otherId;
+                       movimientos++;
+                       $("#movimientos-text").text(movimientos);
+
+                     }
+                });
+
 }
 
 function checkMatch(){
   //try{
+    updateBoard();
+    //just for debug
+    /*for (var row = maxRows-1; row >= 0; row--) {
+      console.log("checkMatch board["+row+"]" + board[row]);
+    }*/
+
+    nroVecesCheck++;
+    console.log("checkmatch: " + nroVecesCheck);
+
     //Horizontal and Vertical
     toClean = [];
     for (var row = 0; row < maxRows; row++) {
@@ -77,21 +106,22 @@ function checkMatch(){
                 )
                 {
 
-                toClean.push( "_" + row + col );
-                toClean.push( "_" + row + (col+1) );
-                toClean.push( "_" + row + (col+2) );
+                //Adding 1 as :nth-last-child(xx) uses index starting 1
+                toClean.push( "_" + (row+1) + (col+1) );
+                toClean.push( "_" + (row+1) + (col+1+1) );
+                toClean.push( "_" + (row+1) + (col+2+1) );
 
                 if(board[row][col+3] !== undefined &&
                   board[row][col] === board[row][col+3]){
-                  toClean.push( "_" + row + (col+3) );
+                  toClean.push( "_" + (row+1) + (col+3+1) );
 
                   if(board[row][col+4] !== undefined &&
                     board[row][col] === board[row][col+4]){
-                    toClean.push( "_" + row + (col+4) );
+                    toClean.push( "_" + (row+1) + (col+4+1) );
 
                     if(board[row][col+5] !== undefined &&
                       board[row][col] === board[row][col+5]){
-                      toClean.push( "_" + row + (col+5) );
+                      toClean.push( "_" + (row+1) + (col+5+1) );
 
                     }
                   }
@@ -109,24 +139,26 @@ function checkMatch(){
                 )
                 {
 
-                toClean.push( "_" + row + col );
-                toClean.push( "_" + (row+1) + col );
-                toClean.push( "_" + (row+2) + col );
+                //Adding 1 as :nth-last-child(xx) uses index starting 1
+                toClean.push( "_" + (row+1) + (col+1) );
+                toClean.push( "_" + (row+1+1) + (col+1) );
+                toClean.push( "_" + (row+2+1) + (col+1) );
 
                 if(board[row+3] !== undefined &&
                   board[row+3][col] !== undefined &&
                   board[row][col] === board[row+3][col]){
-                  toClean.push( "_" + (row+3) + col );
+
+                  toClean.push( "_" + (row+3+1) + (col+1) );
 
                   if(board[row+4] !== undefined &&
                     board[row+4][col] !== undefined &&
                     board[row][col] === board[row+4][col]){
-                    toClean.push( "_" + (row+4) + col );
+                    toClean.push( "_" + (row+4+1) + (col+1) );
 
                     if(board[row+5] !== undefined &&
                       board[row+5][col] !== undefined &&
                       board[row][col] === board[row+5][col]){
-                      toClean.push( "_" + (row+5) + col );
+                      toClean.push( "_" + (row+5+1) + (col+1) );
 
                     }
                   }
@@ -135,7 +167,7 @@ function checkMatch(){
 
           } //end if
         } // end col for
-        console.log("checkMatch board["+row+"]" + board[row]);
+        //console.log("checkMatch board["+row+"]" + board[row]);
 
       } //end row for
 
@@ -152,51 +184,54 @@ function checkMatch(){
     console.log("toUniqueClean:");
     $.each(uniqueToClean, function( index, value ) {
       console.log( index + ": " + value );
+      var fila    = value.charAt(1);
+      var columna = value.charAt(2);
       //$("#candy" + row+col).toogle("pulsate");
-      $("#candy" + value)
+
+      $(".col-"+columna+" img:nth-last-child(" + fila + ")")
           .fadeOut(100).fadeIn(300)
           .fadeOut(100).fadeIn(300)
           .fadeOut(100).fadeIn(300)
           .fadeOut(100).fadeIn(300)
-          .fadeOut(600);
+          .animate({
+            opacity: 0
+          }, 600, "linear", function(){
+            //$(this).addClass("removeMe");
+            $(this).remove();
+
+            //new element
+            var candyType = Math.floor(Math.random() * 4);
+            var row = parseInt(fila) - 1;
+            var col = parseInt(col) - 1;
+
+            newCandy(candyType+1).hide().prependTo(".col-"+columna).fadeIn();
+          });
+
 
       puntaje += 10;
           $("#score-text").text(puntaje);
 
     });
 
-    //nothing to clean, ok, but if there is something to clean, checkMatch again
-    if(uniqueToClean.length === 0){
-      refill();
-      checkMatch();
-    }
-  /*} catch (err){
 
-  }*/
-
-  //fillCols();
 }
 
-function refill() {
+function updateBoard(){
+  board = [];
+  // First declare rows
   for (var row = 0; row < maxRows; row++) {
-    for (var col = 0; col < maxCols; col++) {
-        //prepend one candy on this column if position is zero
-        if(board[row][col] == 0) {
-          //then add new one
-          var candyType = Math.floor(Math.random() * 4);
-          board[row][col] = candyType+1;
-          $(".col-" + (row+1) ).prepend("<img id='"+("candy_"+row+col)+"' class='elemento' src='image/"+board[row][col]+".png'>");
-        }
-    }
+        board.push([]);
+  }
+  // Second, items for cols
+  for (var row = 0; row < maxRows; row++) {
+      for (var col = 0; col < maxCols; col++) {
+          board[row].push(parseInt(
+            $(".col-"+(col+1)+" img:nth-last-child("+(row+1)+")").attr("title") )
+          );
+      }
   }
 
-  for (var row = 0; row < maxRows; row++) {
-    for (var col = 0; col < maxCols; col++) {
-      //
-    }
-  }
-}
-
+};
 //
 function aBlanco(elemento){
 
@@ -241,11 +276,12 @@ $( document ).ready(function() {
     console.log("reinicio called, " + this.innerHTML);
     if(this.innerHTML == "Iniciar") {
       this.innerHTML = "Reiniciar";
-      //inicio timer
-      inicio();
 
       //inicio Juego
       inicioJuego();
+
+      //inicio timer
+      inicio();
 
     } else {
       reinicio();
